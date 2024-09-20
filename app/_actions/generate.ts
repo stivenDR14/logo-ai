@@ -12,29 +12,40 @@ export async function generate({ brand_name, industry, description }: Form) {
   }
   const inference = new HfInference(process.env.HF_ACCESS_TOKEN);
 
-  const prompt = await inference.chatCompletion({
-    model: "meta-llama/Meta-Llama-3.1-70B-Instruct",
-    messages: [
-      { role: "user", content: "lee, a noodle restaurant" },
-      {
-        role: "assistant",
-        content:
-          'logo,Minimalist,A pair of chopsticks and a bowl of rice with the word "Lee",',
-      },
-      { role: "user", content: "cat shop" },
-      { role: "assistant", content: "wablogo,Minimalist,Leaf and cat,logo," },
-      { role: "user", content: "Ato, real estate company" },
-      {
-        role: "assistant",
-        content:
-          'logo,Minimalist,A man stands in front of a door,his shadow forming the word "A",',
-      },
-      { role: "user", content: `${brand_name}, ${description}, ${industry}` },
-    ],
-    temperature: 0.5,
-    max_tokens: 1024,
-    top_p: 0.7,
-  });
+  const prompt: any = await inference
+    .chatCompletion({
+      model: "meta-llama/Meta-Llama-3.1-70B-Instruct",
+      messages: [
+        { role: "user", content: "lee, a noodle restaurant" },
+        {
+          role: "assistant",
+          content:
+            'logo,Minimalist,A pair of chopsticks and a bowl of rice with the word "Lee",',
+        },
+        { role: "user", content: "cat shop" },
+        { role: "assistant", content: "wablogo,Minimalist,Leaf and cat,logo," },
+        { role: "user", content: "Ato, real estate company" },
+        {
+          role: "assistant",
+          content:
+            'logo,Minimalist,A man stands in front of a door,his shadow forming the word "A",',
+        },
+        { role: "user", content: `${brand_name}, ${description}, ${industry}` },
+      ],
+      temperature: 0.5,
+      max_tokens: 1024,
+      top_p: 0.7,
+    })
+    .then((res) => res)
+    .catch((err) => {
+      return { error: err.message };
+    });
+
+  if (prompt?.error) {
+    return {
+      error: prompt.error,
+    };
+  }
 
   if (prompt?.choices[0]?.message?.content) {
     const hfRequest = await inference.textToImage({

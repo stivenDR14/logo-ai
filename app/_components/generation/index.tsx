@@ -10,6 +10,7 @@ import { Steps } from "./step/list";
 import { Industry } from "./step/industry";
 import { Description } from "./step/description";
 import classNames from "classnames";
+import { toast } from "react-toastify";
 
 export const Generation = () => {
   const [form, setForm] = useState<Form>({
@@ -26,13 +27,14 @@ export const Generation = () => {
   const handleGenerate = async () => {
     if (loading) return;
     setLoading(true);
-    const response = await generate(form);
-    if (response.data) {
+    try {
+      const response = await generate(form);
       setResult(response.data);
-    } else {
-      console.log("Error: ", response.error);
+    } catch (err) {
+      toast.error("An error occurred. Please try again later.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

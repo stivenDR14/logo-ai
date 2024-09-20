@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import "@/assets/globals.css";
 import { Navigation } from "@/components/_navigation";
 
@@ -54,6 +57,7 @@ export default function RootLayout({
           <Navigation />
           {children}
         </div>
+        <ToastContainer />
       </body>
     </html>
   );
