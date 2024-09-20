@@ -18,16 +18,9 @@ export const Navigation = () => {
             />
           </div>
         </div>
-        <p className="font-semibold text-lg">LogoAI</p>
+        <p className="font-semibold text-lg text-white">LogoAI</p>
       </div>
-      <ul className="flex items-center justify-right gap-3">
-        <li>
-          <a href="#">X</a>
-        </li>
-        <li>
-          <a href="#">HF</a>
-        </li>
-      </ul>
+      <ul className="flex items-center justify-right gap-3 text-white"></ul>
     </div>
   );
 };
