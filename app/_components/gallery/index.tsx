@@ -14,7 +14,7 @@ export const Gallery = ({ logos }: { logos: Array<number> }) => {
             key={index}
             src={`/api/images/${index}`}
             alt="Generated logo"
-            className="rounded-2xl w-72 h-52 object-cover"
+            className="rounded-2xl size-72 object-cover"
           />
         ))}
       </div>
