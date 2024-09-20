@@ -1,4 +1,4 @@
-import prisma from "@/_utils/prisma";
+// import prisma from "@/_utils/prisma";
 
 export async function GET() {
   // const images = await prisma.logo.findMany({
