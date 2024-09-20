@@ -1,6 +1,8 @@
+"use server";
+
 import prisma from "@/_utils/prisma";
 
-export async function GET() {
+export const getLogos = async () => {
   const images = await prisma.logo.findMany({
     select: {
       id: true,
@@ -10,5 +12,5 @@ export async function GET() {
       id: "desc",
     },
   });
-  return Response.json(images.map((image) => image.id));
-}
+  return images.map((image) => image.id);
+};
