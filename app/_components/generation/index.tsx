@@ -20,7 +20,6 @@ export const Generation = () => {
     style: "",
   });
 
-  const [step, setStep] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<number | undefined>(undefined);
 
@@ -41,7 +40,7 @@ export const Generation = () => {
       <h3 className="max-w-4xl text-3xl text-[#aaaaaa] font-semibold mb-12 text-center mx-auto">
         Start your <span className="text-white">generation</span> here.
       </h3>
-      <Steps step={step} form={form} />
+      <Steps form={form} />
       <div className="grid grid-cols-3 gap-20">
         <Brand form={form} setForm={setForm} />
         <Description form={form} setForm={setForm} />

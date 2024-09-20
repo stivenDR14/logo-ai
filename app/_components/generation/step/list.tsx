@@ -30,7 +30,7 @@ const STEPS = [
   },
 ];
 
-export const Steps = ({ step, form }: { step: number; form: Form }) => {
+export const Steps = ({ form }: { form: Form }) => {
   return (
     <div className="w-full flex items-center justify-center gap-2 mb-12">
       {STEPS.map((s, i) => (

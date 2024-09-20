@@ -1,7 +1,6 @@
-import { NextRequest } from "next/server";
 import prisma from "@/_utils/prisma";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const images = await prisma.logo.findMany({
     select: {
       id: true,
