@@ -38,19 +38,19 @@ export const Generation = () => {
   };
 
   return (
-    <main id="generation" className="w-full py-20">
-      <h3 className="max-w-4xl text-3xl text-[#aaaaaa] font-semibold mb-12 text-center mx-auto">
+    <main id="generation" className="w-full py-10 lg:py-20">
+      <h3 className="max-w-4xl text-2xl lg:text-3xl text-[#aaaaaa] font-semibold mb-12 text-center mx-auto">
         Start your <span className="text-white">generation</span> here.
       </h3>
       <Steps form={form} />
-      <div className="grid grid-cols-3 gap-20">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-20">
         <Brand form={form} setForm={setForm} />
         <Description form={form} setForm={setForm} />
         <Industry form={form} setForm={setForm} />
-        <div className="col-span-3 flex items-center justify-center">
+        <div className="lg:col-span-3 flex items-center justify-center">
           <button
             className={classNames(
-              "rounded-full bg-white text-zinc-950 font-medium text-sm px-6 py-3 hover:bg-opacity-80 transition-all duration-150 disabled:bg-zinc-500 disabled:text-zinc-700",
+              "max-lg:w-full rounded-full bg-white text-zinc-950 font-medium text-sm px-6 py-3 hover:bg-opacity-80 transition-all duration-150 disabled:bg-zinc-500 disabled:text-zinc-700",
               {
                 "animate-pulse": loading,
               }

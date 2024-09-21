@@ -53,7 +53,7 @@ export default function RootLayout({
       <body
         className={`${nohemiRegular.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="min-h-screen w-full overflow-auto font-[family-name:var(--font-nohemi-sans)] p-6 scroll-smooth">
+        <div className="h-screen w-full overflow-auto font-[family-name:var(--font-nohemi-sans)] p-6 scroll-smooth">
           <Navigation />
           {children}
         </div>

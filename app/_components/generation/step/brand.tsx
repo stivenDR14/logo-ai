@@ -8,7 +8,7 @@ export const Brand = ({
   setForm: React.Dispatch<React.SetStateAction<Form>>;
 }) => {
   return (
-    <div className="">
+    <div className="w-full">
       <label htmlFor="brand_name" className="text-zinc-300 mb-1 block text-sm">
         Brand name
       </label>
