@@ -10,7 +10,9 @@ export async function generate({ brand_name, industry, description }: Form) {
   if (!process.env.PUBLIC_FILE_UPLOAD_DIR) {
     throw new Error("PUBLIC_FILE_UPLOAD_DIR is not set");
   }
-  const inference = new HfInference(process.env.HF_ACCESS_TOKEN);
+  const inference = new HfInference(process.env.HF_ACCESS_TOKEN, {
+    use_cache: false,
+  });
 
   const prompt: any = await inference
     .chatCompletion({
