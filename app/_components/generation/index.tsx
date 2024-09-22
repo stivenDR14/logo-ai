@@ -62,7 +62,7 @@ export const Generation = () => {
           </button>
         </div>
         {result && (
-          <div className="col-span-3 flex items-center justify-center">
+          <div className="lg:col-span-3 flex items-center justify-center rounded-3xl">
             <img
               src={`/api/images/${result}`}
               alt="Generated logo"
