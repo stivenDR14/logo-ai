@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export const Gallery = ({ logos }: { logos: Array<number> }) => {
   return (
     <section id="gallery" className="w-full py-10 lg:py-16">
@@ -10,10 +12,12 @@ export const Gallery = ({ logos }: { logos: Array<number> }) => {
       </h3>
       <div className="max-lg:grid max-lg:grid-cols-2 lg:flex lg:items-start lg:justify-center gap-6 flex-wrap">
         {logos.map((index) => (
-          <img
+          <Image
             key={index}
             src={`/api/images/${index}`}
             alt="Generated logo"
+            width={500}
+            height={500}
             className="rounded-2xl w-full lg:size-72 object-cover"
           />
         ))}

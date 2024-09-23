@@ -1,10 +1,10 @@
-import { getLogos } from "./_actions/logos";
+import { getLastLogos } from "./_actions/logos";
 import { Gallery } from "./_components/gallery";
 import { Generation } from "./_components/generation";
 import { HeroHeader } from "./_components/hero-header";
 
 async function lastLogos() {
-  const logos = await getLogos();
+  const logos = await getLastLogos();
   return logos;
 }
 export const revalidate = 0;

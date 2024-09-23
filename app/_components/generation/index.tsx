@@ -11,6 +11,7 @@ import { Industry } from "./step/industry";
 import { Description } from "./step/description";
 import classNames from "classnames";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 export const Generation = () => {
   const [form, setForm] = useState<Form>({
@@ -63,10 +64,12 @@ export const Generation = () => {
         </div>
         {result && (
           <div className="lg:col-span-3 flex items-center justify-center rounded-3xl">
-            <img
+            <Image
               src={`/api/images/${result}`}
               alt="Generated logo"
               className="h-[300px]"
+              width={400}
+              height={400}
             />
           </div>
         )}
