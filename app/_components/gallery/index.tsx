@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export const Gallery = ({ logos }: { logos: Array<number> }) => {
   return (
@@ -21,6 +22,14 @@ export const Gallery = ({ logos }: { logos: Array<number> }) => {
             className="rounded-2xl w-full lg:size-72 object-cover"
           />
         ))}
+      </div>
+      <div className="mt-12 flex items-center justify-center">
+        <Link
+          href="/gallery"
+          className="rounded-full text-zinc-300 bg-zinc-900 font-medium text-base px-6 py-3 hover:bg-opacity-80 transition-all duration-150 text-center max-lg:w-full"
+        >
+          View all examples
+        </Link>
       </div>
     </section>
   );

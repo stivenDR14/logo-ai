@@ -7,7 +7,10 @@ import Link from "next/link";
 export const Navigation = () => {
   return (
     <div className="rounded-full bg-zinc-950 border border-white/10 px-6 py-2.5 lg:pr-7 lg:py-4 flex items-center justify-center lg:justify-between max-w-max lg:max-w-xl lg:w-full mx-auto shadow-md relative">
-      <div className="flex items-center justify-center gap-3 relative">
+      <Link
+        href="/"
+        className="flex items-center justify-center gap-3 relative"
+      >
         <div className="relative">
           <Image src={Logo} alt="logo" className="size-6" />
           <div className="absolute left-0 -translate-x-[calc(100%+12px)] top-5 text-white flex justify-end gap-1 -rotate-6">
@@ -20,7 +23,7 @@ export const Navigation = () => {
           </div>
         </div>
         <p className="font-semibold text-lg text-white">LogoAI</p>
-      </div>
+      </Link>
       <ul className="hidden lg:flex items-center justify-right gap-3">
         <li className="text-zinc-400 hover:text-white">
           <Link href="/gallery">Gallery</Link>
