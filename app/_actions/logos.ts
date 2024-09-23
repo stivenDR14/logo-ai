@@ -15,7 +15,7 @@ export const getLastLogos = async () => {
   return images.map((image) => image.id);
 };
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 24;
 
 export const getLogos = async (page: number = 0) => {
   const images = await prisma.logo.findMany({
