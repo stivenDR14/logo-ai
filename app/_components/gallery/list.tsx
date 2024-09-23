@@ -17,18 +17,21 @@ export const InfiniteGallery = ({
   const [hasMore, setHasMore] = useState(initialHasMore);
 
   const fetchMoreData = async () => {
-    const logos = await getLogos(page + 1);
-    setLogos([...logos.logos]);
-    setHasMore(logos.hasMore);
+    const newLogos = await getLogos(page + 1);
+    setLogos([...logos, ...newLogos.logos]);
+    setHasMore(newLogos.hasMore);
     setPage(page + 1);
   };
 
   return (
     <InfiniteScroll
+      scrollableTarget="content-wrapper"
       dataLength={logos.length} //This is important field to render the next data
       next={fetchMoreData}
       hasMore={hasMore}
-      loader={<h4>Loading...</h4>}
+      loader={
+        <div className="w-full max-lg:col-span-2 text-center">Loading...</div>
+      }
       className="max-lg:grid max-lg:grid-cols-2 lg:flex lg:items-start lg:justify-center gap-6 flex-wrap"
       endMessage={
         <div className="w-full max-lg:col-span-2 text-zinc-400 text-center">

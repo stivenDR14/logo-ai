@@ -53,7 +53,10 @@ export default function RootLayout({
       <body
         className={`${nohemiRegular.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="h-screen w-full overflow-auto font-[family-name:var(--font-nohemi-sans)] p-6 scroll-smooth">
+        <div
+          id="content-wrapper"
+          className="h-screen w-full overflow-auto font-[family-name:var(--font-nohemi-sans)] p-6 scroll-smooth"
+        >
           <Navigation />
           {children}
           <footer className="mt-4 w-full max-w-4xl mx-auto border-t border-zinc-800 pt-8 pb-3 text-center">
