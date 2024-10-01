@@ -64,6 +64,7 @@ export default function RootLayout({
               Powered by{" "}
               <a
                 href="https://github.com/huggingface/huggingface.js"
+                target="_blank"
                 className="font-mono text-amber-500 hover:text-amber-400"
               >
                 huggingface.js
@@ -71,6 +72,7 @@ export default function RootLayout({
               and{" "}
               <a
                 href="https://huggingface.co/Shakker-Labs/FLUX.1-dev-LoRA-Logo-Design"
+                target="_blank"
                 className="font-mono text-zinc-100 hover:text-white"
               >
                 Shakker-Labs/FLUX.1-dev-LoRA-Logo-Design
