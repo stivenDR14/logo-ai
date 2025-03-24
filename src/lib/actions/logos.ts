@@ -8,7 +8,7 @@ export const getLastLogos = async () => {
     select: {
       id: true,
     },
-    take: 24,
+    take: 8,
     orderBy: {
       id: "desc",
     },

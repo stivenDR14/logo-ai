@@ -1,3 +1,4 @@
+import { sanitizeInput } from "@/src/lib/helpers";
 import { Form } from "@/src/types";
 
 export const Description = ({
@@ -7,6 +8,11 @@ export const Description = ({
   form: Form;
   setForm: React.Dispatch<React.SetStateAction<Form>>;
 }) => {
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const sanitizedValue = sanitizeInput(e.target.value);
+    setForm({ ...form, description: sanitizedValue });
+  };
+
   return (
     <div className="w-full">
       <label htmlFor="description" className="text-zinc-300 mb-1 block text-sm">

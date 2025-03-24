@@ -7,3 +7,13 @@ export const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
   }
   return window.btoa(binary);
 };
+
+export const sanitizeInput = (input: string) => {
+  return input
+    .trim()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};

@@ -8,7 +8,6 @@ import { createLogoRecord } from "../db/logo";
 import { saveLogoFile } from "../utils/file-storage";
 
 export async function generate(formData: Form) {
-  // Validar variables de entorno
   const { isValid, error } = validateEnvironment([
     "PUBLIC_FILE_UPLOAD_DIR",
     "HF_ACCESS_TOKEN",

@@ -9,16 +9,12 @@ export const HeroHeader = () => {
 
   useInterval(() => {
     setSelectedWord((prev) => {
-      switch (prev) {
-        case "Think.":
-          return "Customize.";
-        case "Customize.":
-          return "Generate.";
-        case "Generate.":
-          return "Think.";
-        default:
-          return "Think.";
-      }
+      const wordMap: { [key: string]: string } = {
+        "Think.": "Customize.",
+        "Customize.": "Generate.",
+        "Generate.": "Think.",
+      };
+      return wordMap[prev] || "Think.";
     });
   }, 2000);
 

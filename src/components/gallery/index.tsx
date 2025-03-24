@@ -19,7 +19,7 @@ export const Gallery = ({ logos }: { logos: Array<number> }) => {
             alt="Generated logo"
             width={500}
             height={500}
-            className="rounded-2xl w-full lg:size-72 object-cover"
+            className="rounded-2xl w-full lg:size-72 object-cover transition-transform hover:scale-105 duration-300"
           />
         ))}
       </div>

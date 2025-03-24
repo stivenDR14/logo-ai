@@ -1,3 +1,4 @@
+import { sanitizeInput } from "@/src/lib/helpers";
 import { Form } from "@/src/types";
 
 export const Brand = ({
@@ -7,6 +8,11 @@ export const Brand = ({
   form: Form;
   setForm: React.Dispatch<React.SetStateAction<Form>>;
 }) => {
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const sanitizedValue = sanitizeInput(e.target.value);
+    setForm({ ...form, brand_name: sanitizedValue });
+  };
+
   return (
     <div className="w-full">
       <label htmlFor="brand_name" className="text-zinc-300 mb-1 block text-sm">
@@ -18,7 +24,7 @@ export const Brand = ({
         placeholder="Hugging Face"
         value={form.brand_name}
         className="border bg-zinc-900 border-zinc-800 rounded-lg py-2 px-4 text-gray-200 outline-none w-full placeholder:text-gray-600"
-        onChange={(e) => setForm({ ...form, brand_name: e.target.value })}
+        onChange={handleOnChange}
       />
     </div>
   );
