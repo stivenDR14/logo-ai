@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Brand } from "./step/brand";
 import { Stepper } from "./step/stepper";
@@ -12,6 +12,8 @@ import Image from "next/image";
 import { Form } from "@/src/types";
 import { generate } from "@/src/lib/actions/generate";
 import { FaSpinner } from "react-icons/fa";
+import { v4 as uuidv4 } from "uuid";
+import { useSSEProgress } from "@/src/hooks/useSSEProgress";
 
 export const Generation = () => {
   const [form, setForm] = useState<Form>({
@@ -23,36 +25,57 @@ export const Generation = () => {
   });
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [generationStep, setGenerationStep] = useState<string>("");
   const [result, setResult] = useState<number | undefined>(undefined);
-  const timer = useRef<NodeJS.Timeout | null>(null);
+  const [sessionId, setSessionId] = useState<string>("");
 
+  // Using our new custom hook
+  const { progress, message, isComplete } = useSSEProgress(sessionId, loading);
+
+  // When generation completes, update loading state
   useEffect(() => {
-    return () => {
-      if (timer.current) {
-        clearTimeout(timer.current);
-      }
-    };
-  }, []);
+    if (isComplete && loading) {
+      setLoading(false);
+    }
+  }, [isComplete, loading]);
 
   const handleGenerate = async () => {
     if (loading) return;
     setLoading(true);
-    try {
-      setGenerationStep("Generando imagen del logo...");
-      const response = await generate(form);
 
-      setGenerationStep("¡Logo generado con éxito!");
-      setResult(response.data);
+    // Generate a new session ID for this process
+    const newSessionId = uuidv4();
+    setSessionId(newSessionId);
+
+    try {
+      const response = await generate(form, newSessionId);
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        setResult(response.data);
+      }
     } catch (err) {
       toast.error("An error occurred. Please try again later.");
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-        setGenerationStep("");
-      }, 1000);
+      setLoading(false);
     }
   };
+
+  const ProgressIndicator = () => (
+    <div className="lg:col-span-3 mt-8 flex flex-col items-center justify-center">
+      <div className="w-full max-w-md bg-zinc-800 rounded-lg p-4">
+        <div className="mb-2 flex justify-between items-center">
+          <span className="text-zinc-300 text-sm">{message}</span>
+          <span className="text-zinc-400 text-xs">{progress}%</span>
+        </div>
+        <div className="w-full bg-zinc-700 rounded-full h-2.5">
+          <div
+            className="bg-white h-2.5 rounded-full transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          ></div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <main id="generation" className="w-full py-10 lg:py-20">
@@ -88,21 +111,7 @@ export const Generation = () => {
           </button>
         </div>
 
-        {loading && (
-          <div className="lg:col-span-3 mt-8 flex flex-col items-center justify-center">
-            <div className="w-full max-w-md bg-zinc-800 rounded-lg p-4">
-              <div className="mb-2 flex justify-between items-center">
-                <span className="text-zinc-300 text-sm">{generationStep}</span>
-                <span className="text-zinc-400 text-xs">
-                  {Math.floor(Math.random() * 30 + 70)}%
-                </span>
-              </div>
-              <div className="w-full bg-zinc-700 rounded-full h-2.5">
-                <div className="bg-white h-2.5 rounded-full animate-pulse w-4/5"></div>
-              </div>
-            </div>
-          </div>
-        )}
+        {loading && <ProgressIndicator />}
 
         {result && !loading && (
           <div className="lg:col-span-3 flex items-center justify-center rounded-3xl">
