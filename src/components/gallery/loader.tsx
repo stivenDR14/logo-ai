@@ -1,3 +1,5 @@
+import { FaSpinner } from "react-icons/fa";
+
 export default function GalleryLoader() {
   return (
     <section id="gallery" className="w-full py-10 lg:py-16">
@@ -9,7 +11,7 @@ export default function GalleryLoader() {
         Loading <span className="text-white">designs</span>...
       </h3>
       <div className="flex justify-center items-center min-h-[200px]">
-        <div className="animate-spin size-8 border-3 border-white border-t-transparent rounded-full"></div>
+        <FaSpinner className="animate-spin text-2xl text-white" />
       </div>
     </section>
   );

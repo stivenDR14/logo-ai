@@ -1,13 +1,21 @@
 import { InfiniteGallery } from "@/src/components/gallery/list";
+import GalleryLoader from "@/src/components/gallery/loader";
 import { getLogos } from "@/src/lib/actions/logos";
+import { Suspense } from "react";
 
-export default async function Gallery() {
+export default function Gallery() {
+  return (
+    <Suspense fallback={<GalleryLoader />}>
+      <GallerySection />
+    </Suspense>
+  );
+}
+
+async function GallerySection() {
   const { hasMore, logos } = await getLogos();
   return (
-    <section className="w-full py-10 py-16">
-      <div className="grid lg:flex lg:items-start lg:justify-center gap-6 flex-wrap">
-        <InfiniteGallery logos={logos} hasMore={hasMore} />
-      </div>
+    <section className="w-full py-10 py-16 h-full">
+      <InfiniteGallery logos={logos} hasMore={hasMore} />
     </section>
   );
 }

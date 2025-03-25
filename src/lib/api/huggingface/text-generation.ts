@@ -1,17 +1,12 @@
 import { HfInference } from "@huggingface/inference";
 import { LOGO_PROMPT_EXAMPLES } from "@/src/lib/server-constants";
-
-interface PromptParams {
-  brand_name: string;
-  industry: string;
-  description: string;
-}
+import { Form } from "@/src/types";
 
 export async function generateLogoPrompt({
   brand_name,
   industry,
   description,
-}: PromptParams) {
+}: Omit<Form, "style" | "display_name">) {
   try {
     if (!process.env.HF_ACCESS_TOKEN) {
       return { error: "HF_ACCESS_TOKEN is not configured" };

@@ -1,44 +1,31 @@
+import { generate } from "@/src/lib/actions/generate";
 import { NextRequest } from "next/server";
-
-// In-memory storage for progress (use Redis in production)
-const progressStore: Record<string, any> = {};
 
 export function GET(request: NextRequest) {
   const sessionId = request.nextUrl.searchParams.get("session");
+  const brandName = request.nextUrl.searchParams.get("brandName");
+  const industry = request.nextUrl.searchParams.get("industry");
+  const description = request.nextUrl.searchParams.get("description");
 
   if (!sessionId) {
     return new Response("Session ID is required", { status: 400 });
+  }
+
+  if (!brandName || !industry || !description) {
+    return new Response("Brand name, industry, and description are required", {
+      status: 400,
+    });
   }
 
   // Configure headers for SSE
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     start(controller) {
-      // Function to send updates to the client
-      const sendProgress = () => {
-        const progress = progressStore[sessionId] || {
-          progress: 0,
-          step: "initializing",
-          message: "Initializing...",
-        };
-
-        // Send data in SSE format
-        controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify(progress)}\n\n`)
-        );
-
-        // If the process has finished, close the connection
-        if (progress.completed) {
-          controller.close();
-          delete progressStore[sessionId];
-        } else {
-          // Continue sending updates
-          setTimeout(sendProgress, 500);
-        }
-      };
-
-      // Start sending updates
-      sendProgress();
+      generate(controller, encoder, {
+        brand_name: brandName,
+        industry: industry,
+        description: description,
+      }, sessionId);
     },
   });
 
@@ -49,16 +36,4 @@ export function GET(request: NextRequest) {
       Connection: "keep-alive",
     },
   });
-}
-
-// Endpoint to update the progress (for internal use)
-export async function POST(request: NextRequest) {
-  const { sessionId, progress } = await request.json();
-
-  if (!sessionId) {
-    return Response.json({ error: "Session ID is required" }, { status: 400 });
-  }
-
-  progressStore[sessionId] = progress;
-  return Response.json({ success: true });
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { Brand } from "./step/brand";
 import { Stepper } from "./step/stepper";
@@ -14,6 +14,7 @@ import { generate } from "@/src/lib/actions/generate";
 import { FaSpinner } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { useSSEProgress } from "@/src/hooks/useSSEProgress";
+import { ImageWithLoader } from "../ui/image-with-loader";
 
 export const Generation = () => {
   const [form, setForm] = useState<Form>({
@@ -29,14 +30,18 @@ export const Generation = () => {
   const [sessionId, setSessionId] = useState<string>("");
 
   // Using our new custom hook
-  const { progress, message, isComplete } = useSSEProgress(sessionId, loading);
+  const { progress, message, isComplete } = useSSEProgress(
+    sessionId,
+    loading,
+    form,
+    setResult
+  );
 
-  // When generation completes, update loading state
   useEffect(() => {
-    if (isComplete && loading) {
+    if (isComplete) {
       setLoading(false);
     }
-  }, [isComplete, loading]);
+  }, [isComplete]);
 
   const handleGenerate = async () => {
     if (loading) return;
@@ -45,26 +50,15 @@ export const Generation = () => {
     // Generate a new session ID for this process
     const newSessionId = uuidv4();
     setSessionId(newSessionId);
-
-    try {
-      const response = await generate(form, newSessionId);
-
-      if (response.error) {
-        toast.error(response.error);
-      } else {
-        setResult(response.data);
-      }
-    } catch (err) {
-      toast.error("An error occurred. Please try again later.");
-      setLoading(false);
-    }
   };
 
   const ProgressIndicator = () => (
     <div className="lg:col-span-3 mt-8 flex flex-col items-center justify-center">
       <div className="w-full max-w-md bg-zinc-800 rounded-lg p-4">
         <div className="mb-2 flex justify-between items-center">
-          <span className="text-zinc-300 text-sm">{message}</span>
+          <span className="text-zinc-300 text-sm">
+            {progress === 100 ? "Compeleted!" : message}
+          </span>
           <span className="text-zinc-400 text-xs">{progress}%</span>
         </div>
         <div className="w-full bg-zinc-700 rounded-full h-2.5">
@@ -113,16 +107,20 @@ export const Generation = () => {
 
         {loading && <ProgressIndicator />}
 
-        {result && !loading && (
-          <div className="lg:col-span-3 flex items-center justify-center rounded-3xl">
-            <Image
-              src={`/api/images/${result}`}
-              alt="Generated logo"
-              className="h-[300px]"
-              width={400}
-              height={400}
-            />
-          </div>
+        {!loading ? (
+          result && (
+            <div className="lg:col-span-3 flex items-center justify-center rounded-3xl">
+              <ImageWithLoader
+                src={`/api/images/${result}`}
+                alt="Generated logo"
+                width={400}
+                height={400}
+                className="h-[300px]"
+              />
+            </div>
+          )
+        ) : (
+          <div></div>
         )}
       </div>
     </main>

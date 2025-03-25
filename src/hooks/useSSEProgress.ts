@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
+import { Form } from "../types";
 
 interface ProgressData {
   progress: number;
@@ -9,7 +10,12 @@ interface ProgressData {
   completed?: boolean;
 }
 
-export function useSSEProgress(sessionId: string, isLoading: boolean) {
+export function useSSEProgress(
+  sessionId: string,
+  isLoading: boolean,
+  formData: Omit<Form, "style" | "display_name">,
+  setResult: Dispatch<SetStateAction<number | undefined>>
+) {
   const [progress, setProgress] = useState<number>(0);
   const [message, setMessage] = useState<string>("");
   const [isComplete, setIsComplete] = useState<boolean>(false);
@@ -32,9 +38,12 @@ export function useSSEProgress(sessionId: string, isLoading: boolean) {
       }
 
       // Create new SSE connection
-      const eventSource = new EventSource(`/api/sse?session=${sessionId}`);
+      const eventSource = new EventSource(
+        `/api/sse?session=${sessionId}&brandName=${formData.brand_name}&industry=${formData.industry}&description=${formData.description}`
+      );
       eventSourceRef.current = eventSource;
 
+      setIsComplete(false);
       // Handle incoming messages
       eventSource.onmessage = (event) => {
         try {
@@ -49,8 +58,14 @@ export function useSSEProgress(sessionId: string, isLoading: boolean) {
             eventSource.close();
             eventSourceRef.current = null;
 
+            if (data.step === "completed") {
+              setResult(Number(data.message));
+            }
+
             if (data.step === "error") {
               toast.error(data.error || "An error occurred during generation");
+            } else {
+              toast.success("Generation completed");
             }
           }
         } catch (err) {

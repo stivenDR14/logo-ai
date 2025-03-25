@@ -1,34 +1,43 @@
 "use server";
 
-import { Form } from "@/src/types";
 import { validateEnvironment } from "../utils/env-validator";
 import { generateLogoPrompt } from "../api/huggingface/text-generation";
 import { generateLogoImage } from "../api/huggingface/image-generation";
 import { createLogoRecord } from "../db/logo";
 import { saveLogoFile } from "../utils/file-storage";
+import { Form } from "@/src/types";
 
-// Función auxiliar para actualizar el progreso
-async function updateProgress(sessionId: string, progressData: any) {
+async function updateProgress(
+  encoder: TextEncoder,
+  controller: ReadableStreamDefaultController,
+  sessionId: string,
+  progressData: any
+) {
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sse`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, progress: progressData }),
-    });
+    controller.enqueue(
+      encoder.encode(`data: ${JSON.stringify(progressData)}\n\n`)
+    );
+    if (progressData.completed) {
+      controller.close();
+    }
   } catch (error) {
     console.error("Error updating progress:", error);
   }
 }
 
-export async function generate(formData: Form, sessionId: string) {
-  // Validar variables de entorno
+export async function generate(
+  controller: ReadableStreamDefaultController,
+  encoder: TextEncoder,
+  formData: Omit<Form, "style" | "display_name">,
+  sessionId: string
+) {
   const { isValid, error } = validateEnvironment([
     "PUBLIC_FILE_UPLOAD_DIR",
     "HF_ACCESS_TOKEN",
   ]);
 
   if (!isValid) {
-    await updateProgress(sessionId, {
+    await updateProgress(encoder, controller, sessionId, {
       progress: 0,
       step: "error",
       message: "Configuration error",
@@ -39,8 +48,7 @@ export async function generate(formData: Form, sessionId: string) {
   }
 
   try {
-    // Paso 1: Generar prompt
-    await updateProgress(sessionId, {
+    await updateProgress(encoder, controller, sessionId, {
       progress: 20,
       step: "prompt",
       message: "Analyzing brand information...",
@@ -53,7 +61,7 @@ export async function generate(formData: Form, sessionId: string) {
     });
 
     if (promptResult.error) {
-      await updateProgress(sessionId, {
+      await updateProgress(encoder, controller, sessionId, {
         progress: 20,
         step: "error",
         message: "Error generating prompt",
@@ -64,7 +72,7 @@ export async function generate(formData: Form, sessionId: string) {
     }
 
     if (!promptResult.prompt) {
-      await updateProgress(sessionId, {
+      await updateProgress(encoder, controller, sessionId, {
         progress: 20,
         step: "error",
         message: "No prompt generated",
@@ -74,8 +82,7 @@ export async function generate(formData: Form, sessionId: string) {
       return { error: "No prompt generated" };
     }
 
-    // Paso 2: Generar imagen
-    await updateProgress(sessionId, {
+    await updateProgress(encoder, controller, sessionId, {
       progress: 50,
       step: "image",
       message: "Generating logo image...",
@@ -84,7 +91,7 @@ export async function generate(formData: Form, sessionId: string) {
     const imageResult = await generateLogoImage(promptResult.prompt);
 
     if (imageResult.error) {
-      await updateProgress(sessionId, {
+      await updateProgress(encoder, controller, sessionId, {
         progress: 50,
         step: "error",
         message: "Error generating image",
@@ -95,7 +102,7 @@ export async function generate(formData: Form, sessionId: string) {
     }
 
     if (!imageResult.buffer) {
-      await updateProgress(sessionId, {
+      await updateProgress(encoder, controller, sessionId, {
         progress: 50,
         step: "error",
         message: "No image generated",
@@ -105,8 +112,7 @@ export async function generate(formData: Form, sessionId: string) {
       return { error: "No image generated" };
     }
 
-    // Paso 3: Guardar en base de datos
-    await updateProgress(sessionId, {
+    await updateProgress(encoder, controller, sessionId, {
       progress: 80,
       step: "save",
       message: "Saving design...",
@@ -119,7 +125,7 @@ export async function generate(formData: Form, sessionId: string) {
     const fileResult = await saveLogoFile(logoRecord.id, imageResult.buffer);
 
     if (fileResult.error) {
-      await updateProgress(sessionId, {
+      await updateProgress(encoder, controller, sessionId, {
         progress: 80,
         step: "error",
         message: "Error saving logo",
@@ -130,16 +136,16 @@ export async function generate(formData: Form, sessionId: string) {
     }
 
     // Finalizado
-    await updateProgress(sessionId, {
+    await updateProgress(encoder, controller, sessionId, {
       progress: 100,
       step: "completed",
-      message: "Logo generated successfully",
+      message: `${logoRecord.id}`,
       completed: true,
     });
 
     return { data: logoRecord.id };
   } catch (error) {
-    await updateProgress(sessionId, {
+    await updateProgress(encoder, controller, sessionId, {
       progress: 0,
       step: "error",
       message: "Unexpected error during logo generation",
